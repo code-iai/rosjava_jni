@@ -1,0 +1,97 @@
+mkdir -p bin
+cd build && cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=`rospack find rosbuild`/rostoolchain.cmake  ..
+[rosbuild] Building package test_rosjava
+[rosbuild] Including /u/gerkey/code/ros-latest/ros/core/roslisp/cmake/roslisp.cmake
+[rosbuild] Including /u/gerkey/code/ros-latest/ros/core/roscpp/cmake/roscpp.cmake
+[rosbuild] Including /u/gerkey/code/ros-latest/ros/core/rospy/cmake/rospy.cmake
+[rosbuild] Including /u/gerkey/code/ros-latest/ros-experimental/rosjava/cmake/rosjava.cmake
+[rosbuild] Including /u/gerkey/code/ros-latest/ros-experimental/rosclj/cmake/rosclj.cmake
+[rosbuild] Including /u/gerkey/code/ros-latest/ros-experimental/rosoct/cmake/rosoct.cmake
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /u/gerkey/code/ros-latest/ros-experimental/test_rosjava/build
+cd build && make -j8
+make[1]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[2]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[  8%] Built target ROSBUILD_gensrv_oct
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 34%] [ 34%] [ 34%] make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+Built target ROSBUILD_genmsg_lisp
+[ 37%] Built target ROSBUILD_gensrv_java
+Built target ROSBUILD_gensrv_lisp
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+Built target ROSBUILD_gensrv_cpp
+[ 48%] make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+Built target ROSBUILD_genmsg_cpp
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 57%] Built target ROSBUILD_genmsg_py
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 74%] [ 71%] Built target rospack_genmsg_libexe
+[ 77%] [ 74%] Built target _u_gerkey_code_ros-latest_ros-experimental_test_rosjava_bin_AddTwoIntsServer
+Built target _u_gerkey_code_ros-latest_ros-experimental_test_rosjava_bin_Testee
+[ 77%] Built target _u_gerkey_code_ros-latest_ros-experimental_test_rosjava_bin_Talker
+[ 77%] [ 77%] Built target ROSBUILD_genmsg_java
+Built target rospack_gensrv
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 77%] [ 77%] Built target rospack_genmsg
+Built target rospack_gensrv_all
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 80%] make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+Built target _java_compile_1_5
+[ 82%] Built target _java_compile_1_3
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 91%] [ 91%] [ 91%] Built target _java_compile_1_6
+[ 88%] Built target _java_compile_1_9
+Built target _java_compile_1_4
+[ 97%] [ 97%] Built target _java_compile_1_8
+Built target _java_compile_1_7
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 97%] [ 97%] Built target rospack_genmsg_all
+Built target rosbuild_precompile
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[ 97%] Built target _java_compile_1
+make[3]: Entering directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+[100%] Building CXX object CMakeFiles/bin/tester.dir/test/tester.o
+In file included from /u/gerkey/code/ros-latest/ros-experimental/test_rosjava/test/tester.cpp:29:
+/u/gerkey/code/ros-latest/ros-experimental/test_rosjava/msg_gen/cpp/include/test_rosjava/TestDataTypes.h: In constructor ‘test_rosjava::TestDataTypes_<ContainerAllocator>::TestDataTypes_(const ContainerAllocator&)’:
+/u/gerkey/code/ros-latest/ros-experimental/test_rosjava/msg_gen/cpp/include/test_rosjava/TestDataTypes.h:89: error: ‘string_’ is not a member of ‘test_rosjava’
+/u/gerkey/code/ros-latest/ros-experimental/test_rosjava/msg_gen/cpp/include/test_rosjava/TestDataTypes.h:89: error: expected primary-expression before ‘>’ token
+make[3]: *** [CMakeFiles/bin/tester.dir/test/tester.o] Error 1
+make[3]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[2]: *** [CMakeFiles/bin/tester.dir/all] Error 2
+make[2]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make[1]: *** [all] Error 2
+make[1]: Leaving directory `/wg/stor6a/gerkey/code/ros-latest/ros-experimental/test_rosjava/build'
+make: *** [all] Error 2
