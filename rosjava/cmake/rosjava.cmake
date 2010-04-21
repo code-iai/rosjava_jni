@@ -39,9 +39,18 @@ endmacro(add_classpath)
 
 add_classpath(${rosjava_PACKAGE_PATH}/bin)
 
+# Hack to allow dynamic generation of target names that aren't very very
+# long
+set(_java_target_number 1)
+macro(create_target_name _var _base)
+  set(${_var} "${_base}_${_java_target_number}")
+  math(EXPR _java_target_number "${_java_target_number} + 1")
+endmacro(create_target_name)
+
 macro(add_java_source_dir _srcdir)
   add_deps_classpath()
-  set(_targetname _java_compile_${JAVA_OUTPUT_DIR})
+  #set(_targetname _java_compile_${JAVA_OUTPUT_DIR})
+  create_target_name(_targetname _java_compile)
   string(REPLACE "/" "_" _targetname ${_targetname})  
   add_custom_target(${_targetname} ALL)
   foreach(_cp ${_java_classpath})
@@ -71,7 +80,8 @@ macro(add_java_source_dir_internal _targetname _srcdir)
       WORKING_DIRECTORY ${_srcdir}
       DEPENDS ${_java_source_files})
   endif(_java_output_files)
-  set(_local_targetname ${_targetname}_${_srcdir})
+  #set(_local_targetname ${_targetname}_${_srcdir})
+  create_target_name(_local_targetname ${_targetname})
   string(REPLACE "/" "_" _local_targetname ${_local_targetname})
   add_custom_target(${_local_targetname}
     DEPENDS ${_java_output_files})

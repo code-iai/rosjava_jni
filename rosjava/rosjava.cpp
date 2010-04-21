@@ -497,7 +497,9 @@ JNIEXPORT jobjectArray JNICALL Java_ros_roscpp_JNI_getPublishedTopics
     for(int i = 0; i < sz; i++) {
     	env->SetObjectArrayElement(oa, i * 3, env->NewStringUTF(vtopics[i].name.c_str()));
     	env->SetObjectArrayElement(oa, i * 3 + 1, env->NewStringUTF(vtopics[i].datatype.c_str()));
-    	env->SetObjectArrayElement(oa, i * 3 + 2, env->NewStringUTF(vtopics[i].md5sum.c_str()));
+        // The TopicInfo structure no longer has an md5sum.
+    	//env->SetObjectArrayElement(oa, i * 3 + 2, env->NewStringUTF(vtopics[i].md5sum.c_str()));
+    	env->SetObjectArrayElement(oa, i * 3 + 2, env->NewStringUTF(""));
     }
 
 	return oa;
