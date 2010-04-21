@@ -65,7 +65,7 @@ TEST(Rosjava, rosjava)
 {
   ros::NodeHandle n;
   ros::Subscriber sub = n.subscribe("talk", 1000, chatterCallback);
-  ros::Subscriber sub2 = n.subscribe("test-talk", 1000, tdtCallback);
+  ros::Subscriber sub2 = n.subscribe("test_talk", 1000, tdtCallback);
   ros::Duration d(1);
 
   ros::ServiceServer server = n.advertiseService("add_two_ints_cpp", add);
@@ -83,7 +83,7 @@ TEST(Rosjava, rosjava)
   ROS_INFO_STREAM ("Successfully received a startup message.");
 
   ros::Publisher pub = n.advertise<std_msgs::String>("listen", 10);
-  ros::Publisher pub2 = n.advertise<TestDataTypes>("test-listen", 1);
+  ros::Publisher pub2 = n.advertise<TestDataTypes>("test_listen", 1);
   std_msgs::String msg;
   msg.data = "Hi";
 
@@ -165,24 +165,20 @@ TEST(Rosjava, rosjava)
   test.duration_ = ros::Duration(789,987);
 
   test.byte_v.push_back(11);
-  test.byte_f.resize(0);
-  test.byte_f.push_back(22);
-  test.byte_f.push_back(33);
+  test.byte_f[0] = 22;
+  test.byte_f[1] = 33;
 
   test.float64_v.push_back(1.0);
-  test.float64_f.resize(0);
-  test.float64_f.push_back(2.0);
-  test.float64_f.push_back(3.0);
+  test.float64_f[0] = 2.0;
+  test.float64_f[1] = 3.0;
 
   test.string_v.push_back("test1");
-  test.string_f.resize(0);
-  test.string_f.push_back("");
-  test.string_f.push_back("test3");
+  test.string_f[0] = "";
+  test.string_f[1] = "test3";
 
   test.time_v.push_back(ros::Time(222,333));
-  test.time_f.resize(0);
-  test.time_f.push_back(ros::Time(444,555));
-  test.time_f.push_back(ros::Time(666,777));
+  test.time_f[0] = ros::Time(444,555);
+  test.time_f[1] = ros::Time(666,777);
 
   test.Byte_.data = 1;
   std_msgs::Byte tmp;

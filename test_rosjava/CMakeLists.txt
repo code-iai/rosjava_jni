@@ -16,6 +16,6 @@ rospack_add_java_executable(bin/AddTwoIntsClient AddTwoIntsClient)
 
 rosbuild_add_executable(bin/tester test/tester.cpp)
 rosbuild_add_gtest_build_flags(bin/tester)
-rosbuild_add_rostest_future(test/rosjava_test.launch)
+rosbuild_add_rostest(test/rosjava_test.launch)
 
 

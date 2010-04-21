@@ -28,19 +28,19 @@ class Testee {
 		msg.data = "go";
 		Publisher<ros.pkg.std_msgs.msg.String> pub = n.advertise("/talk", msg, 1);
 		
-		Publisher<TestDataTypes> pub2 = n.advertise("/test-talk", new TestDataTypes(), 1);
+		Publisher<TestDataTypes> pub2 = n.advertise("/test_talk", new TestDataTypes(), 1);
 		
-		Publisher<TestBadDataTypes> pub3 = n.advertise("/test-bad", new TestBadDataTypes(), 1);
+		Publisher<TestBadDataTypes> pub3 = n.advertise("/test_bad", new TestBadDataTypes(), 1);
 		
 		
 		Subscriber.QueueingCallback<ros.pkg.std_msgs.msg.String> cb = new Subscriber.QueueingCallback<ros.pkg.std_msgs.msg.String>(); 
 		Subscriber<ros.pkg.std_msgs.msg.String> sub = n.subscribe("/listen", new ros.pkg.std_msgs.msg.String(), cb, 10);
 		
 		Subscriber.QueueingCallback<TestDataTypes> cb2 = new Subscriber.QueueingCallback<TestDataTypes>(); 
-		Subscriber<TestDataTypes> sub2 = n.subscribe("/test-listen", new TestDataTypes(), cb2, 10);
+		Subscriber<TestDataTypes> sub2 = n.subscribe("/test_listen", new TestDataTypes(), cb2, 10);
 		
 		Subscriber.QueueingCallback<TestBadDataTypes> cb3 = new Subscriber.QueueingCallback<TestBadDataTypes>(); 
-		Subscriber<TestBadDataTypes> sub3 = n.subscribe("/test-bad", new TestBadDataTypes(), cb3, 10);
+		Subscriber<TestBadDataTypes> sub3 = n.subscribe("/test_bad", new TestBadDataTypes(), cb3, 10);
 		
 		System.out.println("Waiting for roscpp...");
 		for(int i = 0; i < 60 && cb.size() == 0; i++) {
