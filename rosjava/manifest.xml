@@ -11,7 +11,7 @@
 	</p>
   </description>
 
-  <author>Jason Wolfe (jawolfe@willowgarage.com)</author>
+  <author>Jason Wolfe (jawolfe@willowgarage.com), Nicholas Butko (nbutko@cogsci.ucsd.edu)</author>
   <license>BSD</license>
   <review status="experimental" notes=""/>
   <depend package="roslib"/>
