@@ -334,15 +334,15 @@ JNIEXPORT jboolean JNICALL Java_ros_roscpp_JNI_checkMaster
 JNIEXPORT jstring JNICALL Java_ros_roscpp_JNI_getMasterHost
   (JNIEnv * env, jclass __jni, jlong cppHandle)
 {
-	NodeHandle *handle = (NodeHandle *) cppHandle;
-	return makeString(env, handle->getMasterHost());
+	//NodeHandle *handle = (NodeHandle *) cppHandle;
+	return makeString(env, ros::master::getHost());
 }
 
 JNIEXPORT jint JNICALL Java_ros_roscpp_JNI_getMasterPort
   (JNIEnv * env, jclass __jni, jlong cppHandle)
 {
-	NodeHandle *handle = (NodeHandle *) cppHandle;
-	return handle->getMasterPort();
+	//NodeHandle *handle = (NodeHandle *) cppHandle;
+	return ros::master::getPort();
 }
 
 JNIEXPORT void JNICALL Java_ros_roscpp_JNI_setMasterRetryTimeout
