@@ -19,10 +19,13 @@ class Testee {
 		ros.logWarn("WARN");
 		ros.logError("ERROR");
 		ros.logFatal("FATAL");
-		System.out.println(ros.now());
 		
 		System.out.println("Initialized");		
 		NodeHandle n = ros.createNodeHandle();
+
+                // Can't call Time::now() until *after* the above node
+                // handle has been created.
+		System.out.println(ros.now());
 		
 		ros.pkg.std_msgs.msg.String msg = new ros.pkg.std_msgs.msg.String();
 		msg.data = "go";
