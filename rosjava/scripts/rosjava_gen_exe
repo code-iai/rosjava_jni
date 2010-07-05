@@ -21,7 +21,7 @@ else
     exit 1
   fi
 
-  LD_PRELOAD=$5:\$LIBJSIGL:\$LD_PRELOAD LD_LIBRARY_PATH=${ROSJAVA_BASE_DIR}/bin:$4:\$LD_LIBRARY_PATH java -classpath $1 $2 ${@:6} \$@
+  LD_PRELOAD=$5:\$LIBJSIGL:\$LD_PRELOAD LD_LIBRARY_PATH=${ROSJAVA_BASE_DIR}/bin:$4:\$LD_LIBRARY_PATH java -classpath $1:\$CLASSPATH $2 ${@:6} \$@
 fi
 
 
