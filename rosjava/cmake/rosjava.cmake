@@ -5,6 +5,7 @@ include(FindJava)
 set( _java_classpath "" )
 set( _java_runtime_classpath "" )
 set( _jniexe_path "" )
+set( _ld_preload "" )
 set( JAVA_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/bin" )
 
 # Add all the jar files under a given directory to the classpath
@@ -36,6 +37,13 @@ macro(add_classpath _cp)
     list(APPEND _java_classpath ${_cp})
   endif(EXISTS ${_cp})
 endmacro(add_classpath)
+
+# Add a library to LD_PRELOAD
+macro(add_ld_preload _lib)
+  if(EXISTS ${_lib})
+    list(APPEND _ld_preload ${_lib})
+  endif(EXISTS ${_lib})
+endmacro(add_ld_preload)
 
 add_classpath(${rosjava_PACKAGE_PATH}/bin)
 
@@ -110,9 +118,10 @@ endmacro(add_deps_classpath)
 macro(rospack_add_java_executable _exe_name _class)
   string(REPLACE ";" ":" _javac_classpath_param "${JAVA_OUTPUT_DIR}:${_java_runtime_classpath}:${rosjava_PACKAGE_PATH}/bin")
   string(REPLACE ";" ":" _jniexe_path "${_jniexe_path}")
+  string(REPLACE ";" ":" _ld_preload "${_ld_preload}")
   add_custom_command(
     OUTPUT ${EXECUTABLE_OUTPUT_PATH}/${_exe_name}
-    COMMAND ${rosjava_PACKAGE_PATH}/scripts/rosjava_gen_exe ${_javac_classpath_param} ${_class} ${EXECUTABLE_OUTPUT_PATH}/${_exe_name} ${_jniexe_path} )
+    COMMAND ${rosjava_PACKAGE_PATH}/scripts/rosjava_gen_exe ${_javac_classpath_param} ${_class} ${EXECUTABLE_OUTPUT_PATH}/${_exe_name} ${_jniexe_path} ${_ld_preload})
   set(_targetname ${EXECUTABLE_OUTPUT_PATH}/${_exe_name})
   string(REPLACE "/" "_" _targetname ${_targetname})
   add_custom_target(${_targetname} ALL DEPENDS ${EXECUTABLE_OUTPUT_PATH}/${_exe_name})
