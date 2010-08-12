@@ -84,7 +84,7 @@ macro(add_java_source_dir_internal _targetname _srcdir)
     string(REPLACE ";" ":" _javac_classpath_param "${_java_classpath}")
     add_custom_command(
       OUTPUT ${_java_output_files}
-      COMMAND ${JAVA_COMPILE} -source 1.5 -classpath ${_javac_classpath_param} -d ${JAVA_OUTPUT_DIR} ${_java_source_files}
+      COMMAND ${JAVA_COMPILE} -source 1.5 -classpath "${_javac_classpath_param}:$ENV{ROSJAVA_AUX_CLASSPATH}" -d ${JAVA_OUTPUT_DIR} ${_java_source_files}
       WORKING_DIRECTORY ${_srcdir}
       DEPENDS ${_java_source_files})
   endif(_java_output_files)
@@ -116,7 +116,7 @@ macro(add_deps_classpath)
 endmacro(add_deps_classpath)
 
 macro(rospack_add_java_executable _exe_name _class)
-  string(REPLACE ";" ":" _javac_classpath_param "${JAVA_OUTPUT_DIR}:${_java_runtime_classpath}:${rosjava_PACKAGE_PATH}/bin")
+  string(REPLACE ";" ":" _javac_classpath_param "${JAVA_OUTPUT_DIR}:${_java_runtime_classpath}:${rosjava_PACKAGE_PATH}/bin:$ENV{ROSJAVA_AUX_CLASSPATH}")
   string(REPLACE ";" ":" _jniexe_path "${_jniexe_path}")
   string(REPLACE ";" ":" _ld_preload "${_ld_preload}")
   add_custom_command(
