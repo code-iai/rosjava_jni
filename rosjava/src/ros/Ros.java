@@ -54,6 +54,8 @@ public abstract class Ros {
     public abstract void init(String name, boolean noSigintHandler, boolean anonymousName, boolean noRosout, String [] args);
     public void init(String name) { init(name, false, false, false, new String[0]); }
 
+  public abstract boolean isInitialized();
+
 	public abstract NodeHandle createNodeHandle(String ns, Map<String, String> remappings);
 
 	public abstract Time now();

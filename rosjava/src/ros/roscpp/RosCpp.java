@@ -71,6 +71,11 @@ public class RosCpp extends Ros {
 	}
     
 	@Override
+  public boolean isInitialized() {
+    return isInitialized;
+  }
+  
+  @Override
 	public NodeHandle createNodeHandle(String ns, Map<String, String> remappings) {
 		if (!isInitialized) throw new IllegalArgumentException("ROS has not been initialized.");
 		return new CppNodeHandle(this, ns, remappings);
