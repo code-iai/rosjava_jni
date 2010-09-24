@@ -4,25 +4,32 @@ include(FindJava)
 
 set( _java_classpath "" )
 set( _java_runtime_classpath "" )
-set( _jniexe_path "" )
+set( _ld_lib_path "" )
 set( _ld_preload "" )
 set( JAVA_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/bin" )
 
 # Add all the jar files under a given directory to the classpath
 macro(add_jar_dir _jardir)
-    file(GLOB_RECURSE _jar_files ${_jardir}/*.jar)
-    foreach(_jar ${_jar_files})
-        add_classpath(${_jar})
-        add_runtime_classpath(${_jar})
-    endforeach(_jar)
+  file(GLOB_RECURSE _jar_files ${_jardir}/*.jar)
+  foreach(_jar ${_jar_files})
+    add_classpath(${_jar})
+    add_runtime_classpath(${_jar})
+  endforeach(_jar)
 endmacro(add_jar_dir)
 
 # Add all the .jnilib files under a given directory to the classpath
 macro(add_jni_path _cp)
 	if(EXISTS ${_cp})
-		list(APPEND _jniexe_path ${_cp})
+		list(APPEND _ld_lib_path ${_cp})
 	endif(EXISTS ${_cp})
 endmacro(add_jni_path _cp) 
+
+# Add all the path to LD_LIBRARY_PATH
+macro(add_ld_lib_path _cp)
+	if(EXISTS ${_cp})
+		list(APPEND _ld_lib_path ${_cp})
+	endif(EXISTS ${_cp})
+endmacro(add_ld_lib_path _cp)
 
 # Add a jar or directory to java runtime dependencies. 
 macro(add_runtime_classpath _cp)
@@ -115,13 +122,47 @@ macro(add_deps_classpath)
  #  add_classpath( ${PROJECT_SOURCE_DIR}/srv/java )
 endmacro(add_deps_classpath)
 
+macro(add_exported_classpaths)
+  execute_process( 
+    COMMAND rospack export --lang=java --attrib=classpath ${PROJECT_NAME} 
+    ERROR_VARIABLE __rospack_err_ignore
+    OUTPUT_VARIABLE _pkg_class_path
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(_pkg_class_path)
+    string(REPLACE " " ";" _pkg_class_path ${_pkg_class_path})
+    string(REPLACE ":" ";" _pkg_class_path ${_pkg_class_path})
+    foreach( _cp ${_pkg_class_path} )
+      add_classpath(${_cp})
+      add_runtime_classpath(${_cp})
+    endforeach( _cp )
+  endif(_pkg_class_path)
+endmacro(add_exported_classpaths)
+
+macro(add_exported_ld_lib_paths)
+  execute_process( 
+    COMMAND rospack export --lang=java --attrib=ld_lib_path ${PROJECT_NAME} 
+    ERROR_VARIABLE __rospack_err_ignore
+    OUTPUT_VARIABLE _pkg_ld_lib_path
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(_pkg_ld_lib_path)
+    string(REPLACE " " ";" _pkg_ld_lib_path ${_pkg_ld_lib_path})
+    string(REPLACE ":" ";" _pkg_ld_lib_path ${_pkg_ld_lib_path})
+    foreach( _ld ${_pkg_ld_lib_path} )
+      add_ld_lib_path(${_ld})
+    endforeach( _ld )
+  endif(_pkg_ld_lib_path)
+endmacro(add_exported_ld_lib_paths)  
+
+add_exported_classpaths()
+add_exported_ld_lib_paths()
+
 macro(rospack_add_java_executable _exe_name _class)
   string(REPLACE ";" ":" _javac_classpath_param "${JAVA_OUTPUT_DIR}:${_java_runtime_classpath}:${rosjava_PACKAGE_PATH}/bin:$ENV{ROSJAVA_AUX_CLASSPATH}")
-  string(REPLACE ";" ":" _jniexe_path "${_jniexe_path}")
+  string(REPLACE ";" ":" _ld_lib_path "${_ld_lib_path}")
   string(REPLACE ";" ":" _ld_preload "${_ld_preload}")
   add_custom_command(
     OUTPUT ${EXECUTABLE_OUTPUT_PATH}/${_exe_name}
-    COMMAND ${rosjava_PACKAGE_PATH}/scripts/rosjava_gen_exe ${_javac_classpath_param} ${_class} ${EXECUTABLE_OUTPUT_PATH}/${_exe_name} ${_jniexe_path} ${_ld_preload})
+    COMMAND ${rosjava_PACKAGE_PATH}/scripts/rosjava_gen_exe ${_javac_classpath_param} ${_class} ${EXECUTABLE_OUTPUT_PATH}/${_exe_name} ${_ld_lib_path} ${_ld_preload})
   set(_targetname ${EXECUTABLE_OUTPUT_PATH}/${_exe_name})
   string(REPLACE "/" "_" _targetname ${_targetname})
   add_custom_target(${_targetname} ALL DEPENDS ${EXECUTABLE_OUTPUT_PATH}/${_exe_name})
