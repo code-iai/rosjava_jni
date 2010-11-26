@@ -211,7 +211,7 @@ def write_imports(s, spec):
     s.write('\n') 
     
     
-def write_class(s, spec):
+def write_class(s, spec, extra_metadata_methods={}, static=False):
     """
     Writes the entire message struct: declaration, constructors, members, constants and member functions
     @param s: The stream to write to
@@ -221,7 +221,10 @@ def write_class(s, spec):
     """
     
     msg = spec.short_name
-    s.write('public class %s extends ros.communication.Message {\n' % msg)
+    if static:
+        s.write('static public class %s extends ros.communication.Message {\n' % msg)
+    else:
+        s.write('public class %s extends ros.communication.Message {\n' % msg)
 
     write_constant_declarations(s, spec)
     write_members(s, spec)
@@ -233,9 +236,10 @@ def write_class(s, spec):
     full_text = compute_full_text_escaped(gendeps_dict)
     
     write_member_functions(s, spec,
-                           MD5Sum=md5sum,
-                           DataType='%s/%s'%(spec.package, spec.short_name),
-                           MessageDefinition=full_text)
+                           dict({'MD5Sum': '"%s"' % md5sum,
+                                 'DataType': '"%s/%s"' % (spec.package, spec.short_name),
+                                 'MessageDefinition': full_text},
+                                **extra_metadata_methods))
     
     s.write('} // class %s\n'%(msg))
 
@@ -461,18 +465,19 @@ def write_serialization_methods(s, spec):
     write_serialization_length(s, spec)
     write_serialization_method(s, spec)
     write_deserialization_method(s, spec)
-    
-def write_member_functions(s, spec, MD5Sum, DataType, MessageDefinition):
+
+def write_msg_metadata_method(s, name, return_value):
+    s.write('  public static java.lang.String __s_get%s() { return %s; }\n' % (name, return_value))
+    s.write('  public java.lang.String get%(name)s() { return __s_get%(name)s(); }\n'
+            % {'name': name})
+            
+def write_member_functions(s, spec, msg_metadata_methods):
     """
     The the default member functions
     """
     s.write('\n')
-    s.write('  public static java.lang.String __s_getDataType() { return "%s"; }\n' % DataType)
-    s.write('  public static java.lang.String __s_getMD5Sum() { return "%s"; }\n' % MD5Sum)
-    s.write('  public static java.lang.String __s_getMessageDefinition() { return %s; }\n\n' % MessageDefinition)
-    s.write('  public java.lang.String getDataType() { return __s_getDataType(); }\n')
-    s.write('  public java.lang.String getMD5Sum() { return __s_getMD5Sum(); }\n')
-    s.write('  public java.lang.String getMessageDefinition() { return __s_getMessageDefinition(); }\n\n')
+    for method_desc in msg_metadata_methods.items():
+        write_msg_metadata_method(s, *method_desc)
 
     write_clone_methods(s, spec)
     write_serialization_methods(s, spec)
