@@ -45,7 +45,8 @@ import roslib.gentools
 from cStringIO import StringIO
 
 MSG_TYPE_TO_JAVA = {'bool': 'boolean',
-                    'char': 'byte',
+                    'char': 'char',
+                    'byte': 'short',
                     'uint8': 'short', 'int8': 'byte', 
                     'uint16': 'int', 'int16': 'short', 
                     'uint32': 'long', 'int32': 'int',
@@ -57,61 +58,70 @@ MSG_TYPE_TO_JAVA = {'bool': 'boolean',
                     'duration': 'ros.communication.Duration'}
 
 MSG_TYPE_TO_SERIALIZATION_CODE = {
-    'bool': '%s.put(%s)',
-    'char': '%s.put(%s)',
-    'uint8': '%s.put(%s & 0xff)',
-    'int8': '%s.put(%s)',
-    'uint16': '%s.putShort(%s % 0xffff)',
-    'int16': '%s.putShort(%s)',
-    'uint32': '%s.putInt(%s & 0xffffffff)',
-    'int32': '%s.putInt(%s)',
-    'uint64': '%s.putLong(%s)',
-    'int64': '%s.putLong(%s)',
-    'float32': '%s.putFloat(%s)',
-    'float64': '%s.putDouble(%s)',
-    'string': 'Serialization.writeString(%s, %s)',
-    'time': 'Serialization.writeTime(%s, %s)',
-    'duration': 'Serialization.writeDuration(%s, %s)'}
+    'bool': '%(buffer)s.put((byte)(%(name)s ? 1 : 0))',
+    'char': '%(buffer)s.put((byte)%(name)s)',
+    'byte': '%(buffer)s.put((byte)%(name)s)',
+    'uint8': '%(buffer)s.put((byte)%(name)s)',
+    'int8': '%(buffer)s.put(%(name)s)',
+    'uint16': '%(buffer)s.putShort((short)%(name)s)',
+    'int16': '%(buffer)s.putShort(%(name)s)',
+    'uint32': '%(buffer)s.putInt((int)%(name)s)',
+    'int32': '%(buffer)s.putInt(%(name)s)',
+    'uint64': '%(buffer)s.putLong(%(name)s)',
+    'int64': '%(buffer)s.putLong(%(name)s)',
+    'float32': '%(buffer)s.putFloat(%(name)s)',
+    'float64': '%(buffer)s.putDouble(%(name)s)',
+    'string': 'Serialization.writeString(%(buffer)s, %(name)s)',
+    'time': 'Serialization.writeTime(%(buffer)s, %(name)s)',
+    'duration': 'Serialization.writeDuration(%(buffer)s, %(name)s)'}
 
 MSG_TYPE_TO_DESERIALIZATION_CODE = {
-    'bool': '%s.get()',
-    'char': '%s.get()',
-    'uint8': '%s.get() + 0x80',
+    'bool': '%s.get() != 0 ? true : false',
+    'char': '(char)(%s.get() & 0xff)',
+    'byte': '(short)(%s.get() & 0xff)',
+    'uint8': '(short)(%s.get() & 0xff)',
     'int8': '%s.get()',
-    'uint16': '%s.getShort() + 0x8000',
+    'uint16': '(int)(%s.getShort() & 0xffff)',
     'int16': '%s.getShort()',
-    'uint32': '%s.getInt() + 0x80000000',
+    'uint32': '(long)(%s.getInt() & 0xffffffff)',
     'int32': '%s.getInt()',
     'uint64': '%s.getLong()',
     'int64': '%s.getLong()',
     'float32': '%s.getFloat()',
-    'float64': '%s.getFloat()',
+    'float64': '%s.getDouble()',
     'string': 'Serialization.readString(%s)',
-    'time': 'Serialization.writeTime(%s)',
-    'duration': 'Serialization.writeDuration(%s)'}
+    'time': 'Serialization.readTime(%s)',
+    'duration': 'Serialization.readDuration(%s)'}
 
-BUILTIN_TYPE_SIZES = {'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8,
-                      'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8,
-                      'time': 8, 'duration': 8}
+BUILTIN_TYPE_SIZES = {'bool': 1, 'int8': 1, 'byte': 1, 'int16': 2, 'int32': 4, 'int64': 8,
+                      'char': 1, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8,
+                      'float32': 4, 'float64': 8, 'time': 8, 'duration': 8}
 
-BOXED_TYPES = {'byte': 'Byte',
-               'short': 'Short',
-               'int': 'Integer',
-               'long': 'Long',
-               'boolean': 'Boolean',
-               'float': 'Float',
-               'double': 'Double'}
+BOXED_TYPES = {'byte': 'java.lang.Byte',
+               'short': 'java.lang.Short',
+               'int': 'java.lang.Integer',
+               'long': 'java.lang.Long',
+               'boolean': 'java.lang.Boolean',
+               'float': 'java.lang.Float',
+               'double': 'java.lang.Double',
+               'java.lang.String': 'java.lang.String',
+               'ros.communication.Time': 'ros.communication.Time'}
 
 def builtin_type_size(type):
     return BUILTIN_TYPE_SIZES[type.split('[')[0]]
 
-def base_type_to_java(base_type):
+def base_type_to_java(base_type, boxed=False):
     base_type = base_type.split('[')[0]
     if (roslib.msgs.is_builtin(base_type)):
-        java_type = MSG_TYPE_TO_JAVA[base_type]
+        if boxed:
+            java_type = BOXED_TYPES[MSG_TYPE_TO_JAVA[base_type]]
+        else:
+            java_type = MSG_TYPE_TO_JAVA[base_type]
     elif (len(base_type.split('/')) == 1):
         if (roslib.msgs.is_header_type(base_type)):
-            java_type = 'ros.pkg.std_msgs.msg.Header'
+            java_type = 'ros.pkg.roslib.msg.Header'
+        elif boxed:
+            java_type = BOXED_TYPES[MSG_TYPE_TO_JAVA[base_type]]
         else:
             java_type = base_type
     else:
@@ -126,6 +136,16 @@ def base_type_serialization_code(type):
 def base_type_deserialization_code(type):
     return MSG_TYPE_TO_DESERIALIZATION_CODE[type.split('[')[0]]
 
+def type_initializer(type, default_val = None):
+    if default_val:
+        return ' = %s' % default_val
+    elif roslib.msgs.is_builtin(type):
+        if type in ['time', 'duration', 'string']:
+            return ' = new %s()' % base_type_to_java(type)
+        else:
+            return ''
+    else:
+        return ' = new %s()' % base_type_to_java(type)
     
 def msg_decl_to_java(field, default_val=None):
     """
@@ -141,15 +161,17 @@ def msg_decl_to_java(field, default_val=None):
 
     if type(field).__name__ == 'Field' and field.is_array:
         if field.array_len is None:
-            arr_type = BOXED_TYPES[java_type] if field.is_builtin else java_type
+            if field.is_builtin and field.type.split('[')[0] != 'string':
+                arr_type = BOXED_TYPES[java_type]
+            else:
+                arr_type = java_type
             return 'java.util.Vector<%s> %s = new java.util.Vector<%s>()' % (arr_type, field.name, arr_type)
         else:
             return '%s[] %s = new %s[%d]' % (java_type, field.name, java_type, field.array_len)
-    elif field.is_builtin:
-        return '%s %s%s' % (java_type, field.name,
-                             (' = %s' % default_val) if default_val else '')
     else:
-        return '%(type)s %(name)s = new %(type)s()' % {'type': java_type, 'name': field.name}
+        return '%(type)s %(name)s%(initializer)s' % {'type': java_type,
+                                                     'name': field.name,
+                                                     'initializer': type_initializer(field.type, default_val)}
     
 def write_begin(s, spec, file):
     """
@@ -189,7 +211,7 @@ def write_imports(s, spec):
     s.write('\n') 
     
     
-def write_class(s, spec, extra_deprecated_traits = {}):
+def write_class(s, spec):
     """
     Writes the entire message struct: declaration, constructors, members, constants and member functions
     @param s: The stream to write to
@@ -200,9 +222,11 @@ def write_class(s, spec, extra_deprecated_traits = {}):
     
     msg = spec.short_name
     s.write('public class %s extends ros.communication.Message {\n' % msg)
-    
+
     write_constant_declarations(s, spec)
     write_members(s, spec)
+
+    write_constructor(s, spec)
     
     gendeps_dict = roslib.gentools.get_dependencies(spec, spec.package, compute_files=False)
     md5sum = roslib.gentools.compute_md5(gendeps_dict)
@@ -213,8 +237,26 @@ def write_class(s, spec, extra_deprecated_traits = {}):
                            DataType='%s/%s'%(spec.package, spec.short_name),
                            MessageDefinition=full_text)
     
-    s.write('}; // class %s\n'%(msg))
-    
+    s.write('} // class %s\n'%(msg))
+
+def write_constructor(s, spec):
+    s.write("""
+  public %s() {
+""" % spec.short_name)
+    for field in spec.parsed_fields():
+        if field.type.split('[')[0] in roslib.msgs.PRIMITIVE_TYPES and  \
+                field.type.split('[')[0] != 'string':
+            continue
+        if field.is_array and field.array_len:
+            s.write("""
+    for(int __i=0; __i<%(array_len)d; __i++) {
+      %(name)s[__i]%(initializer)s;
+    }
+""" % {'name': field.name, 'type': field.type.split('[')[0],
+       'array_len': field.array_len,
+       'initializer': type_initializer(field.type.split('[')[0])})
+    s.write('  }\n')
+            
 def write_member(s, field):
     """
     Writes a single member's declaration and type typedef
@@ -227,7 +269,7 @@ def write_member(s, field):
     @type name: str
     """
     java_decl = msg_decl_to_java(field)
-    s.write('  %s;\n' % java_decl)
+    s.write('  public %s;\n' % java_decl)
 
 def write_members(s, spec):
     """
@@ -271,9 +313,18 @@ def write_constant_declarations(s, spec):
     s.write('\n')
     
 def write_clone_methods(s, spec):
-    s.write('  public %s clone() {}\n' % spec.short_name)
-    s.write('  public void setTo(ros.communication.Message __m) {}\n\n')
-
+    s.write("""
+  public %(type)s clone() {
+    %(type)s c = new %(type)s();
+    c.deserialize(serialize(0));
+    return c;
+  }
+""" % {'type': spec.short_name})
+    s.write("""
+  public void setTo(ros.communication.Message m) {
+    deserialize(m.serialize(0));
+  }
+""")
 
 def write_serialization_length(s, spec):
     s.write("""
@@ -281,10 +332,20 @@ def write_serialization_length(s, spec):
     int __l = 0;
 """)
     for field in spec.parsed_fields():
-        if field.is_builtin:
-            if field.type == 'string':
-                size_expr = '4 + %s.length()' % field.name
-            elif field.is_array and field.array_len is None:
+        if field.type.split('[')[0] == 'string':
+            if field.is_array:
+                if field.array_len is None:
+                    s.write('    __l += 4;')
+                s.write("""
+    for(java.lang.String val : %(name)s) {
+      __l += 4 + val.length();
+    }
+""" % {'name': field.name})
+            else:
+                s.write('    __l += 4 + %s.length();\n' % field.name)
+
+        elif field.is_builtin:
+            if field.is_array and field.array_len is None:
                 size_expr = '4 + %s.size() * %d' % (field.name, builtin_type_size(field.type))
             elif field.is_array:
                 size_expr = '%d' % (int(field.array_len) * builtin_type_size(field.type))
@@ -312,20 +373,27 @@ def write_serialization_method(s, spec):
     for field in spec.parsed_fields():
         if field.is_builtin:
             if field.is_array:
+                var_type_unboxed = base_type_to_java(field.base_type)
+                if field.base_type in ['string', 'time', 'duration']:
+                    var_value = 'val'
+                else:
+                    var_value = 'val.%sValue()' % var_type_unboxed
                 if field.array_len is None:
-                    s.write('    bb.putInt(%s.size())' % field.name)
+                    s.write('    bb.putInt(%s.size());' % field.name)
                 s.write("""
-    for(%s val : %s) {
-      %s;
+    for(%(type)s val : %(name)s) {
+      %(serialization)s;
     }
-""" % (base_type_to_java(field.base_type), field.name,
-       base_type_serialization_code(field.type) % ('bb', field.name)))
+""" % {'type': base_type_to_java(field.base_type, boxed=True),
+       'name': field.name,
+       'serialization': base_type_serialization_code(field.type) % {'buffer': 'bb', 'name': var_value}})
             else:
-                s.write('    %s;\n' % base_type_serialization_code(field.type) % ('bb', field.name))
+                s.write('    %s;\n' % (base_type_serialization_code(field.type) % {'buffer': 'bb',
+                                                                                   'name': field.name}))
         else:
             if field.is_array:
                 if field.array_len is None:
-                    s.write('    bb.putInt(%s.size())' % field.name)
+                    s.write('    bb.putInt(%s.size());' % field.name)
                 s.write("""
     for(%s val : %s) {
       val.serialize(bb, seq);
@@ -338,41 +406,56 @@ def write_serialization_method(s, spec):
 
 def write_deserialization_method(s, spec):
     s.write("""
-  public void deserialize(ByteBuffer) {
+  public void deserialize(ByteBuffer bb) {
 """)
     for field in spec.parsed_fields():
         java_type = base_type_to_java(field.base_type)
         if field.is_array:
             if field.array_len is None:
                 s.write('    int __%s_len = bb.getInt();' % field.name)
-            else:
-                s.write('    int __%(name)s_len = %(name)s.length;' % {'name': field.name})
-            if field.is_builtin:
-                s.write("""
+                if field.is_builtin:
+                    s.write("""
     %(name)s = new java.util.Vector<%(boxed_type)s>(__%(name)s_len);
+    %(name)s.setSize(__%(name)s_len);
     for(int __i = 0; __i<__%(name)s_len; __i++) {
       %(name)s.set(__i, %(deserialization_code)s);
     }
 """ % {'name': field.name,
        'boxed_type': BOXED_TYPES[java_type],
        'type': java_type,
-       'deserialization_code': base_type_deserialization_code(field.type)})
-            else:
-                s.write("""
+       'deserialization_code': base_type_deserialization_code(field.type) % 'bb'})
+                else:
+                    s.write("""
     %(name)s = new java.util.Vector<%(type)s>(__%(name)s_len);
+    %(name)s.setSize(__%(name)s_len);
     for(int __i = 0; __i<__%(name)s_len; __i++) {
       %(type)s __tmp = new %(type)s();
       __tmp.deserialize(bb);
-      %(name)s.put(__i, __tmp);
-   }
+      %(name)s.set(__i, __tmp);
+    }
 """ % {'name': field.name,
        'type': java_type})
-
+            elif field.is_builtin:
+                s.write("""
+    int __%(name)s_len = %(name)s.length;
+    for(int __i = 0; __i<__%(name)s_len; __i++) {
+      %(name)s[__i] = %(deserialization_code)s;
+    }
+""" % {'name': field.name,
+       'deserialization_code': base_type_deserialization_code(field.type) % 'bb'})
+            else:
+                s.write("""
+    int __%(name)s_len = %(name)s.length;
+    for(int __i = 0; __i<__%(name)s_len; __i++) {
+      %(name)s[__i].deserialize(bb);
+    }
+""" % {'name': field.name})
         elif field.is_builtin:
             s.write('    %s = %s;\n' % (field.name,
                                         base_type_deserialization_code(field.type) % 'bb'))
         else:
             s.write('    %s.deserialize(bb);\n' % field.name)
+    s.write('  }\n')
     
 def write_serialization_methods(s, spec):
     write_serialization_length(s, spec)
@@ -386,7 +469,7 @@ def write_member_functions(s, spec, MD5Sum, DataType, MessageDefinition):
     s.write('\n')
     s.write('  public static java.lang.String __s_getDataType() { return "%s"; }\n' % DataType)
     s.write('  public static java.lang.String __s_getMD5Sum() { return "%s"; }\n' % MD5Sum)
-    s.write('  public static java.lang.String __s_getMessageDefinition() { return "%s"; }\n\n' % MessageDefinition)
+    s.write('  public static java.lang.String __s_getMessageDefinition() { return %s; }\n\n' % MessageDefinition)
     s.write('  public java.lang.String getDataType() { return __s_getDataType(); }\n')
     s.write('  public java.lang.String getMD5Sum() { return __s_getMD5Sum(); }\n')
     s.write('  public java.lang.String getMessageDefinition() { return __s_getMessageDefinition(); }\n\n')
@@ -409,8 +492,9 @@ def compute_full_text_escaped(gen_deps_dict):
     s = StringIO()
     for line in lines:
         line = escape_string(line)
-        s.write('%s\\n\\\n'%(line))
-        
+        s.write('\"%s\\n\" +\n'%(line))
+
+    s.write('\"\"')
     val = s.getvalue()
     s.close()
     return val
