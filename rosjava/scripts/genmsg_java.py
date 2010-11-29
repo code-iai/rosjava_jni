@@ -97,31 +97,18 @@ BUILTIN_TYPE_SIZES = {'bool': 1, 'int8': 1, 'byte': 1, 'int16': 2, 'int32': 4, '
                       'char': 1, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8,
                       'float32': 4, 'float64': 8, 'time': 8, 'duration': 8}
 
-BOXED_TYPES = {'byte': 'java.lang.Byte',
-               'short': 'java.lang.Short',
-               'int': 'java.lang.Integer',
-               'long': 'java.lang.Long',
-               'boolean': 'java.lang.Boolean',
-               'float': 'java.lang.Float',
-               'double': 'java.lang.Double',
-               'java.lang.String': 'java.lang.String',
-               'ros.communication.Time': 'ros.communication.Time'}
+JAVA_PRIMITIVE_TYPES = ['byte', 'short', 'int', 'long', 'boolean', 'float', 'double']
 
 def builtin_type_size(type):
     return BUILTIN_TYPE_SIZES[type.split('[')[0]]
 
-def base_type_to_java(base_type, boxed=False):
+def base_type_to_java(base_type):
     base_type = base_type.split('[')[0]
     if (roslib.msgs.is_builtin(base_type)):
-        if boxed:
-            java_type = BOXED_TYPES[MSG_TYPE_TO_JAVA[base_type]]
-        else:
-            java_type = MSG_TYPE_TO_JAVA[base_type]
+        java_type = MSG_TYPE_TO_JAVA[base_type]
     elif (len(base_type.split('/')) == 1):
         if (roslib.msgs.is_header_type(base_type)):
             java_type = 'ros.pkg.roslib.msg.Header'
-        elif boxed:
-            java_type = BOXED_TYPES[MSG_TYPE_TO_JAVA[base_type]]
         else:
             java_type = base_type
     else:
@@ -161,13 +148,15 @@ def msg_decl_to_java(field, default_val=None):
 
     if type(field).__name__ == 'Field' and field.is_array:
         if field.array_len is None:
-            if field.is_builtin and field.type.split('[')[0] != 'string':
-                arr_type = BOXED_TYPES[java_type]
+            if field.is_builtin and java_type in JAVA_PRIMITIVE_TYPES:
+                decl_string = '%(java_type)s[] %(name)s = new %(java_type)s[0]'
             else:
-                arr_type = java_type
-            return 'java.util.Vector<%s> %s = new java.util.Vector<%s>()' % (arr_type, field.name, arr_type)
+                decl_string = 'java.util.ArrayList<%(java_type)s> %(name)s = new java.util.ArrayList<%(java_type)s>()'
+            return decl_string % { 'name': field.name, 'java_type': java_type}
         else:
-            return '%s[] %s = new %s[%d]' % (java_type, field.name, java_type, field.array_len)
+            return '%(java_type)s[] %(name)s = new %(java_type)s[%(array_len)d]' % {'java_type': java_type,
+                                                                                    'name': field.name,
+                                                                                    'array_len': field.array_len}
     else:
         return '%(type)s %(name)s%(initializer)s' % {'type': java_type,
                                                      'name': field.name,
@@ -336,6 +325,7 @@ def write_serialization_length(s, spec):
     int __l = 0;
 """)
     for field in spec.parsed_fields():
+        java_type = base_type_to_java(field.base_type)
         if field.type.split('[')[0] == 'string':
             if field.is_array:
                 if field.array_len is None:
@@ -350,14 +340,16 @@ def write_serialization_length(s, spec):
 
         elif field.is_builtin:
             if field.is_array and field.array_len is None:
-                size_expr = '4 + %s.size() * %d' % (field.name, builtin_type_size(field.type))
+                if java_type in JAVA_PRIMITIVE_TYPES:
+                    size_expr = '4 + %s.length * %d' % (field.name, builtin_type_size(field.type))
+                else:
+                    size_expr = '4 + %s.size() * %d' % (field.name, builtin_type_size(field.type))
             elif field.is_array:
                 size_expr = '%d' % (int(field.array_len) * builtin_type_size(field.type))
             else:
                 size_expr = '%d' % builtin_type_size(field.type)
             s.write('    __l += %s; // %s\n' % (size_expr, field.name))
         elif field.is_array:
-            java_type = base_type_to_java(field.base_type)
             if field.array_len is None:
                 s.write('    __l += 4;')
             s.write("""
@@ -375,25 +367,27 @@ def write_serialization_method(s, spec):
   public void serialize(ByteBuffer bb, int seq) {
 """)
     for field in spec.parsed_fields():
+        java_type = base_type_to_java(field.base_type)
         if field.is_builtin:
             if field.is_array:
-                var_type_unboxed = base_type_to_java(field.base_type)
-                if field.base_type in ['string', 'time', 'duration']:
-                    var_value = 'val'
-                else:
-                    var_value = 'val.%sValue()' % var_type_unboxed
                 if field.array_len is None:
-                    s.write('    bb.putInt(%s.size());' % field.name)
+                    if java_type in JAVA_PRIMITIVE_TYPES:
+                        s.write('    bb.putInt(%s.length);' % field.name)
+                    else:
+                        s.write('    bb.putInt(%s.size());' % field.name)
                 s.write("""
     for(%(type)s val : %(name)s) {
       %(serialization)s;
     }
-""" % {'type': base_type_to_java(field.base_type, boxed=True),
+""" % {'type': java_type,
        'name': field.name,
-       'serialization': base_type_serialization_code(field.type) % {'buffer': 'bb', 'name': var_value}})
+       'serialization': base_type_serialization_code(field.type) % {'buffer': 'bb', 'name': 'val'}})
+
+            # No array. Use primitive serialization
             else:
                 s.write('    %s;\n' % (base_type_serialization_code(field.type) % {'buffer': 'bb',
                                                                                    'name': field.name}))
+        # Not a builtin type, but array
         else:
             if field.is_array:
                 if field.array_len is None:
@@ -402,7 +396,9 @@ def write_serialization_method(s, spec):
     for(%s val : %s) {
       val.serialize(bb, seq);
     }
-""" % (base_type_to_java(field.base_type), field.name))
+""" % (java_type, field.name))
+
+            # No primitive type, no array
             else:
                 s.write('    %s.serialize(bb, seq);\n' % field.name)
     
@@ -414,46 +410,58 @@ def write_deserialization_method(s, spec):
 """)
     for field in spec.parsed_fields():
         java_type = base_type_to_java(field.base_type)
+
         if field.is_array:
+            # Template fields:
+            # size_initializer
+            # type_initializer
+            # deserialization code
+
+            size_initializer = None
+            type_initializer = None
+            deserialization_code = None
+
             if field.array_len is None:
-                s.write('    int __%s_len = bb.getInt();' % field.name)
+                size_initializer = 'bb.getInt()'
+                if java_type not in JAVA_PRIMITIVE_TYPES:
+                    type_initializer = 'new java.util.ArrayList<%(type)s>(__%(name)s_len)'
+                    if field.is_builtin:
+                        deserialization_code = '%(name)s.add(%(deserialization_code)s)' \
+                            % {'name': '%(name)s',
+                               'deserialization_code': base_type_deserialization_code(field.type) % 'bb'}
+                    else:
+                        deserialization_code = """%(type)s __tmp = new %(type)s();
+%(indent)s__tmp.deserialize(bb);
+%(indent)s%(name)s.add(__tmp);"""
+
+            if not size_initializer:
+                size_initializer = '%(name)s.length;' % {'name': field.name}
+            if not type_initializer:
+                type_initializer = 'new %(type)s[__%(name)s_len]'
+            if not deserialization_code:
                 if field.is_builtin:
-                    s.write("""
-    %(name)s = new java.util.Vector<%(boxed_type)s>(__%(name)s_len);
-    %(name)s.setSize(__%(name)s_len);
-    for(int __i = 0; __i<__%(name)s_len; __i++) {
-      %(name)s.set(__i, %(deserialization_code)s);
-    }
-""" % {'name': field.name,
-       'boxed_type': BOXED_TYPES[java_type],
-       'type': java_type,
-       'deserialization_code': base_type_deserialization_code(field.type) % 'bb'})
+                    deserialization_code = '%(name)s[__i] = %(deserialization_code)s' \
+                        % {'name': '%(name)s',
+                           'deserialization_code': base_type_deserialization_code(field.type) % 'bb'}
                 else:
-                    s.write("""
-    %(name)s = new java.util.Vector<%(type)s>(__%(name)s_len);
-    %(name)s.setSize(__%(name)s_len);
-    for(int __i = 0; __i<__%(name)s_len; __i++) {
-      %(type)s __tmp = new %(type)s();
-      __tmp.deserialize(bb);
-      %(name)s.set(__i, __tmp);
+                    deserialization_code = """%(type)s __tmp = new %(type)s();
+%(indent)s__tmp.deserialize(bb);
+%(indent)s%(name)s[__i] = __tmp"""
+
+            # Assemble the code from size_initializer, type_initializer and deserialization_code
+            default_vars_dict = {'name': field.name, 'type': java_type}
+            s.write("""
+    int __%(name)s_len = %(size_initializer)s;
+    %(name)s = %(type_initializer)s;
+    for(int __i=0; __i<__%(name)s_len; __i++) {
+      %(deserialization_code)s;
     }
-""" % {'name': field.name,
-       'type': java_type})
-            elif field.is_builtin:
-                s.write("""
-    int __%(name)s_len = %(name)s.length;
-    for(int __i = 0; __i<__%(name)s_len; __i++) {
-      %(name)s[__i] = %(deserialization_code)s;
-    }
-""" % {'name': field.name,
-       'deserialization_code': base_type_deserialization_code(field.type) % 'bb'})
-            else:
-                s.write("""
-    int __%(name)s_len = %(name)s.length;
-    for(int __i = 0; __i<__%(name)s_len; __i++) {
-      %(name)s[__i].deserialize(bb);
-    }
-""" % {'name': field.name})
+""" % dict(default_vars_dict,
+           **{'size_initializer': size_initializer % default_vars_dict,
+              'type_initializer': type_initializer % default_vars_dict,
+              'deserialization_code': deserialization_code % dict(default_vars_dict, **{'indent': 6*' '})}))
+
+        # No array. Default deserialization.
         elif field.is_builtin:
             s.write('    %s = %s;\n' % (field.name,
                                         base_type_deserialization_code(field.type) % 'bb'))
