@@ -134,7 +134,7 @@ def base_type_deserialization_code(type):
     return MSG_TYPE_TO_DESERIALIZATION_CODE[type.split('[')[0]]
 
 def type_initializer(type, default_val = None):
-    if default_val:
+    if default_val is not None:
         return ' = %s' % default_val
     elif roslib.msgs.is_builtin(type):
         if type in ['time', 'duration', 'string']:
@@ -299,8 +299,6 @@ def write_constant_declaration(s, constant):
     @param constant: The constant
     @type constant: roslib.msgs.Constant
     """
-    
-    # integral types get their declarations as enums to allow use at compile time
     s.write('  static final %s;\n'% msg_decl_to_java(constant, constant.val))
         
 def write_constant_declarations(s, spec):
@@ -312,7 +310,8 @@ def write_constant_declarations(s, spec):
     @param spec: The message spec
     @type spec: roslib.msgs.MsgSpec
     """
-    [write_constant_declaration(s, constant) for constant in spec.constants]
+    for constant in spec.constants:
+        write_constant_declaration(s, constant) 
     s.write('\n')
     
 def write_clone_methods(s, spec):
