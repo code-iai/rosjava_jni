@@ -299,7 +299,7 @@ def write_constant_declaration(s, constant):
     @param constant: The constant
     @type constant: roslib.msgs.Constant
     """
-    s.write('  static final %s;\n'% msg_decl_to_java(constant, constant.val))
+    s.write('  static public final %s;\n'% msg_decl_to_java(constant, constant.val))
         
 def write_constant_declarations(s, spec):
     """
@@ -567,7 +567,7 @@ def compute_full_text_escaped(gen_deps_dict):
     s.close()
     return val
 
-def generate(msg_path):
+def generate(msg_path, output_base_path):
     """
     Generate a message
     
@@ -585,7 +585,11 @@ def generate(msg_path):
     
     write_end(s, spec)
     
-    output_dir = '%s/msg_gen/java/ros/pkg/%s/msg'%(package_dir, package)
+    if output_base_path:
+        output_dir = '%s/msg_gen/java/ros/pkg/%s/msg'%(output_base_path, package)
+    else:
+        output_dir = '%s/msg_gen/java/ros/pkg/%s/msg'%(package_dir, package)
+        
     if (not os.path.exists(output_dir)):
         # if we're being run concurrently, the above test can report false but os.makedirs can still fail if
         # another copy just created the directory
@@ -600,8 +604,12 @@ def generate(msg_path):
     s.close()
 
 def generate_messages(argv):
-    for arg in argv[1:]:
-        generate(arg)
+    if not os.path.exists(argv[-1]) or os.path.isdir(argv[-1]):
+        for arg in argv[1:-1]:
+            generate(arg, argv[-1])
+    else:
+        for arg in argv[1:]:
+            generate(arg)
 
 if __name__ == "__main__":
     generate_messages(sys.argv)
