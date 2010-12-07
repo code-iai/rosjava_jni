@@ -76,7 +76,7 @@ def write_end(s, spec):
     """
     pass
     
-def generate(srv_path):
+def generate(srv_path, output_base_path=None):
     """
     Generate a service
     
@@ -126,8 +126,12 @@ public class %(srv_name)s extends ros.communication.Service<%(srv_name)s.Request
     s.write('\n} //class\n')
     
     write_end(s, spec)
-    
-    output_dir = '%s/srv_gen/java/ros/pkg/%s/srv'%(package_dir, package)
+
+    if output_base_path:
+        output_dir = '%s/ros/pkg/%s/srv'%(output_base_path, package)
+    else:
+        output_dir = '%s/srv_gen/java/ros/pkg/%s/srv'%(package_dir, package)
+
     if (not os.path.exists(output_dir)):
         # if we're being run concurrently, the above test can report false but os.makedirs can still fail if
         # another copy just created the directory
@@ -142,8 +146,12 @@ public class %(srv_name)s extends ros.communication.Service<%(srv_name)s.Request
     s.close()
 
 def generate_services(argv):
-    for arg in argv[1:]:
-        generate(arg)
+    if not os.path.exists(argv[-1]) or os.path.isdir(argv[-1]):
+        for arg in argv[1:-1]:
+            generate(arg, argv[-1])
+    else:
+        for arg in argv[1:]:
+            generate(arg)
 
 if __name__ == "__main__":
     roslib.msgs.set_verbose(False)

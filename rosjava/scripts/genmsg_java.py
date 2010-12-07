@@ -567,7 +567,7 @@ def compute_full_text_escaped(gen_deps_dict):
     s.close()
     return val
 
-def generate(msg_path, output_base_path):
+def generate(msg_path, output_base_path=None):
     """
     Generate a message
     
@@ -586,7 +586,7 @@ def generate(msg_path, output_base_path):
     write_end(s, spec)
     
     if output_base_path:
-        output_dir = '%s/msg_gen/java/ros/pkg/%s/msg'%(output_base_path, package)
+        output_dir = '%s/ros/pkg/%s/msg'%(output_base_path, package)
     else:
         output_dir = '%s/msg_gen/java/ros/pkg/%s/msg'%(package_dir, package)
         
