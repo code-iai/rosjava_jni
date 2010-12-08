@@ -3,10 +3,6 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 set(ROS_BUILD_TYPE Debug)
 rosbuild_init()
 
-# Build java code
-# We have to use this to bootstrap ourselves, since
-# messages cannot build until rosjava is built.
-add_deps_classpath()
 set(_targetname _java_compile_${JAVA_OUTPUT_DIR})
 string(REPLACE "/" "_" _targetname ${_targetname})
 add_custom_target(${_targetname} ALL)
