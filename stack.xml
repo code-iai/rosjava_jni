@@ -1,0 +1,9 @@
+<stack>
+  <description brief="client_rosjava">client_rosjava</description>
+  <author>Maintained by Lorenz Moesenlechner</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/client_rosjava</url>
+  <depend stack="ros" /> <!-- roslang, rospack, roslib, std_msgs, roscpp -->
+
+</stack>
