@@ -87,7 +87,7 @@ class Testee {
 			msg.data="bad";
 		}
 		pub.publish(msg);
-		
+
 		// Test messages
 		while(cb2.size() == 0) {
 			n.spinOnce();
@@ -124,40 +124,40 @@ class Testee {
 		if (test.float64_f[0] != 2.0) msg.data="fail_float64_f[0]";
 		if (test.float64_f[1] != 3.0) msg.data="fail_float64_f[1]";
 		
-		if (test.string_v.length != 1) msg.data="fail_string_v_len";
-		if (!test.string_v[0].equals("test1")) msg.data="fail_string_v[0]";
+		if (test.string_v.size() != 1) msg.data="fail_string_v_len";
+		if (!test.string_v.get(0).equals("test1")) msg.data="fail_string_v[0]";
 		if (!test.string_f[0].equals("")) msg.data="fail_string_f[0]";
 		if (!test.string_f[1].equals("test3")) msg.data="fail_string_f[1]";
 		
-		if (test.time_v.length != 1) msg.data="fail_time_v_len";
-		if (test.time_v[0].secs != 222) msg.data="fail_time_v[0]";
+		if (test.time_v.size() != 1) msg.data="fail_time_v_len";
+		if (test.time_v.get(0).secs != 222) msg.data="fail_time_v[0]";
 		if (test.time_f[0].secs != 444) msg.data="fail_time_f[0]";
 		if (test.time_f[1].secs != 666) msg.data="fail_time_f[1]";
-		if (test.time_v[0].nsecs != 333) msg.data="fail_time_v[0]";
+		if (test.time_v.get(0).nsecs != 333) msg.data="fail_time_v[0]";
 		if (test.time_f[0].nsecs != 555) msg.data="fail_time_f[0]";
 		if (test.time_f[1].nsecs != 777) msg.data="fail_time_f[1]";
 		
 		if (test.Byte_.data != 1) msg.data="fail_Byte_";
-		if (test.Byte_v.length != 2) msg.data="fail_Byte_v_length";
-		if (test.Byte_v[0].data != (byte)2) msg.data="fail_Byte_v[0]";
-		if (test.Byte_v[1].data != (byte)3) msg.data="fail_Byte_v[1]";
+		if (test.Byte_v.size() != 2) msg.data="fail_Byte_v_length";
+		if (test.Byte_v.get(0).data != (byte)2) msg.data="fail_Byte_v[0]";
+		if (test.Byte_v.get(1).data != (byte)3) msg.data="fail_Byte_v[1]";
 
-		if (test.ByteMultiArray_.layout.dim.length != 1) msg.data="fail_ByteMultiArray_layout_dims";
-		if (!test.ByteMultiArray_.layout.dim[0].label.equals("test")) msg.data="fail_ByteMultiArray_layout_dim[0]_label";
-		if (test.ByteMultiArray_.layout.dim[0].size != 1) msg.data="fail_ByteMultiArray_layout_dim[0]_size";
-		if (test.ByteMultiArray_.layout.dim[0].stride != 1) msg.data="fail_ByteMultiArray_layout_dim[0]_stride";
+		if (test.ByteMultiArray_.layout.dim.size() != 1) msg.data="fail_ByteMultiArray_layout_dims";
+		if (!test.ByteMultiArray_.layout.dim.get(0).label.equals("test")) msg.data="fail_ByteMultiArray_layout_dim[0]_label";
+		if (test.ByteMultiArray_.layout.dim.get(0).size != 1) msg.data="fail_ByteMultiArray_layout_dim[0]_size";
+		if (test.ByteMultiArray_.layout.dim.get(0).stride != 1) msg.data="fail_ByteMultiArray_layout_dim[0]_stride";
 		if (test.ByteMultiArray_.layout.data_offset != 0) msg.data="fail_ByteMultiArray_layout_data_offset";
 		if (test.ByteMultiArray_.data.length != 1) msg.data="fail_ByteMultiArray_data_length";
 		if (test.ByteMultiArray_.data[0] != (byte)11) msg.data="fail_ByteMultiArray_data[0]";
 
-		if (test.ByteMultiArray_v.length != 1) msg.data="fail_ByteMultiArray_v_length";
-		if (test.ByteMultiArray_v[0].layout.dim.length != 1) msg.data="fail_ByteMultiArray_v[0]layout_dims";
-		if (!test.ByteMultiArray_v[0].layout.dim[0].label.equals("test")) msg.data="fail_ByteMultiArray_v[0]layout_dim[0]_label:" + test.ByteMultiArray_v[0].layout.dim[0].label;
-		if (test.ByteMultiArray_v[0].layout.dim[0].size != 1) msg.data="fail_ByteMultiArray_v[0]layout_dim[0]_size";
-		if (test.ByteMultiArray_v[0].layout.dim[0].stride != 1) msg.data="fail_ByteMultiArray_v[0]layout_dim[0]_stride";
-		if (test.ByteMultiArray_v[0].layout.data_offset != 0) msg.data="fail_ByteMultiArray_v[0]layout_data_offset";
-		if (test.ByteMultiArray_v[0].data.length != 1) msg.data="fail_ByteMultiArray_v[0]data_length";
-		if (test.ByteMultiArray_v[0].data[0] != (byte)11) msg.data="fail_ByteMultiArray_v[0]data[0]";
+		if (test.ByteMultiArray_v.size() != 1) msg.data="fail_ByteMultiArray_v_length";
+		if (test.ByteMultiArray_v.get(0).layout.dim.size() != 1) msg.data="fail_ByteMultiArray_v[0]layout_dims";
+		if (!test.ByteMultiArray_v.get(0).layout.dim.get(0).label.equals("test")) msg.data="fail_ByteMultiArray_v.get(0)layout_dim.get(0)_label:" + test.ByteMultiArray_v.get(0).layout.dim.get(0).label;
+		if (test.ByteMultiArray_v.get(0).layout.dim.get(0).size != 1) msg.data="fail_ByteMultiArray_v.get(0)layout_dim.get(0)_size";
+		if (test.ByteMultiArray_v.get(0).layout.dim.get(0).stride != 1) msg.data="fail_ByteMultiArray_v.get(0)layout_dim.get(0)_stride";
+		if (test.ByteMultiArray_v.get(0).layout.data_offset != 0) msg.data="fail_ByteMultiArray_v.get(0)layout_data_offset";
+		if (test.ByteMultiArray_v.get(0).data.length != 1) msg.data="fail_ByteMultiArray_v.get(0)data_length";
+		if (test.ByteMultiArray_v.get(0).data[0] != (byte)11) msg.data="fail_ByteMultiArray_v.get(0)data.get(0)";
 
 //		TestDataTypes tmp_ = new TestDataTypes();
 //		tmp_.deserialize(test.serialize(0));
@@ -167,17 +167,16 @@ class Testee {
 		
 		// Now, test the types that are still not built correctly by roscpp
 		TestBadDataTypes tbdt = new TestBadDataTypes();
-		tbdt.Byte_f[0].data = (byte)0xfe;
-		tbdt.Byte_f[1].data = (byte)0xcd;
-		tbdt.ByteMultiArray_f[0].layout.dim = new MultiArrayDimension[1];
-		tbdt.ByteMultiArray_f[0].layout.dim[0] = new MultiArrayDimension();
-		tbdt.ByteMultiArray_f[0].layout.dim[0].label="test";
-		tbdt.ByteMultiArray_f[0].layout.dim[0].size=2;
-		tbdt.ByteMultiArray_f[0].layout.dim[0].stride=1;
-		tbdt.ByteMultiArray_f[0].layout.data_offset=0;
-		tbdt.ByteMultiArray_f[0].data = new byte[2];
-		tbdt.ByteMultiArray_f[0].data[0] = (byte)0xab;
-		tbdt.ByteMultiArray_f[0].data[1] = (byte)0xdc;
+		tbdt.Byte_f[0].data = 0xfe;
+		tbdt.Byte_f[1].data = 0xcd;
+		tbdt.ByteMultiArray_f[0].layout.dim.add(new MultiArrayDimension());
+		tbdt.ByteMultiArray_f[0].layout.dim.get(0).label="test";
+		tbdt.ByteMultiArray_f[0].layout.dim.get(0).size=2;
+		tbdt.ByteMultiArray_f[0].layout.dim.get(0).stride=1;
+    tbdt.ByteMultiArray_f[0].layout.data_offset=0;
+    tbdt.ByteMultiArray_f[0].data = new short[2];
+		tbdt.ByteMultiArray_f[0].data[0] = (short)0xab;
+		tbdt.ByteMultiArray_f[0].data[1] = (short)0xdc;
 
 		// Ensure we serialize and deserialize, in case roscpp does something fancy under the hood (i.e., direct transit)
 		TestBadDataTypes temp = new TestBadDataTypes();
@@ -191,17 +190,17 @@ class Testee {
 		}
 		tbdt = cb3.pop();
 		if (tbdt.Byte_f.length != 2) msg.data="fail_Byte_f_len";
-		if (tbdt.Byte_f[0].data != (byte)0xfe) msg.data="fail_Byte_f[0]";
-		if (tbdt.Byte_f[1].data != (byte)0xcd) msg.data="fail_Byte_f[1]";
+		if (tbdt.Byte_f[0].data != 0xfe) msg.data="fail_Byte_f[0]";
+		if (tbdt.Byte_f[1].data != 0xcd) msg.data="fail_Byte_f[1]";
 		if (tbdt.ByteMultiArray_f.length != 1) msg.data="fail_ByteMultiArray_f_length";
-		if (tbdt.ByteMultiArray_f[0].layout.dim.length != 1) msg.data="fail_ByteMultiArray_f_dims";
-		if (!tbdt.ByteMultiArray_f[0].layout.dim[0].label.equals("test")) msg.data="fail_ByteMultiArray_f_dim[0]_label";
-		if (tbdt.ByteMultiArray_f[0].layout.dim[0].size != 2) msg.data="fail_ByteMultiArray_f_dim[0]_size";
-		if (tbdt.ByteMultiArray_f[0].layout.dim[0].stride != 1) msg.data="fail_ByteMultiArray_f_dim[0]_stride";
+		if (tbdt.ByteMultiArray_f[0].layout.dim.size() != 1) msg.data="fail_ByteMultiArray_f_dims";
+		if (!tbdt.ByteMultiArray_f[0].layout.dim.get(0).label.equals("test")) msg.data="fail_ByteMultiArray_f_dim[0]_label";
+		if (tbdt.ByteMultiArray_f[0].layout.dim.get(0).size != 2) msg.data="fail_ByteMultiArray_f_dim[0]_size";
+		if (tbdt.ByteMultiArray_f[0].layout.dim.get(0).stride != 1) msg.data="fail_ByteMultiArray_f_dim[0]_stride";
 		if (tbdt.ByteMultiArray_f[0].layout.data_offset != 0) msg.data="fail_ByteMultiArray_f_data_offset";
 		if (tbdt.ByteMultiArray_f[0].data.length != 2) msg.data="fail_ByteMultiArray_f_data_length";
-		if (tbdt.ByteMultiArray_f[0].data[0] != (byte)0xab) msg.data="fail_ByteMultiArray_f_data[0]";
-		if (tbdt.ByteMultiArray_f[0].data[1] != (byte)0xdc) msg.data="fail_ByteMultiArray_f_data[1]";
+		if (tbdt.ByteMultiArray_f[0].data[0] != 0xab) msg.data="fail_ByteMultiArray_f_data[0]";
+		if (tbdt.ByteMultiArray_f[0].data[1] != 0xdc) msg.data="fail_ByteMultiArray_f_data[1]";
 		
 		System.out.println("Result of bad msg test: " + msg.data);
 		
