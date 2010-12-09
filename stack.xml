@@ -4,6 +4,7 @@
   <license>BSD</license>  
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/client_rosjava</url>
-  <depend stack="ros" /> <!-- roslang, rospack, roslib, std_msgs, roscpp -->
+  <depend stack="ros" /> <!-- roslang, roslib, rospack -->
+  <depend stack="ros_comm" /> <!-- std_msgs, roscpp -->
 
 </stack>
