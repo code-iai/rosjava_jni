@@ -276,7 +276,7 @@ macro(gensrv_java_pkg pkg output_dir)
   
     # Add the rule to build the .java from the .srv
     add_custom_command(OUTPUT ${_output_java} 
-                       COMMAND ${gensrv_java_exe} ${_input}
+                       COMMAND ${gensrv_java_exe} ${_input} ${output_dir}
                        DEPENDS ${_input} ${gensrv_java_exe} ${genmsg_java_exe} ${gendeps_exe} ${${pkg}_${_srv}_GENDEPS} ${ROS_MANIFEST_LIST})
     list(APPEND _autogen ${_output_java})
   endforeach(_srv)
