@@ -494,6 +494,7 @@ def write_msg_metadata_method(s, name, return_value):
 
 def write_equals_method(s, spec):
     s.write("""
+  @SuppressWarnings("all")
   public boolean equals(Object o) {
     if(!(o instanceof %(type)s))
       return false;
@@ -516,6 +517,7 @@ def write_equals_method(s, spec):
 
 def write_hash_code_method(s, spec):
     s.write("""
+  @SuppressWarnings("all")
   public int hashCode() {
     final int prime = 31;
     int result = 1;
