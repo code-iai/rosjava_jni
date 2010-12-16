@@ -74,6 +74,9 @@ public class RosCpp extends Ros {
   public boolean isInitialized() {
     return isInitialized;
   }
+
+  @Override
+  public boolean ok() { return JNI.rosOk(); }
   
   @Override
 	public NodeHandle createNodeHandle(String ns, Map<String, String> remappings) {

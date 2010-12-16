@@ -60,9 +60,12 @@ JNIEXPORT jlong JNICALL Java_ros_roscpp_JNI_createNodeHandle
 JNIEXPORT void JNICALL Java_ros_roscpp_JNI_shutdown
   (JNIEnv * env, jclass __jni, jlong cppHandle);
 
-JNIEXPORT jboolean JNICALL Java_ros_roscpp_JNI_ok
+JNIEXPORT jboolean JNICALL Java_ros_roscpp_JNI_nhOk
   (JNIEnv * env, jclass __jni, jlong cppHandle);
 
+JNIEXPORT jboolean JNICALL Java_ros_roscpp_JNI_rosOk
+  (JNIEnv * env, jclass __jni);
+  
 JNIEXPORT void JNICALL Java_ros_roscpp_JNI_spin
   (JNIEnv * env, jclass __jni);
 

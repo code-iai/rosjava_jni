@@ -56,6 +56,8 @@ public abstract class Ros {
 
   public abstract boolean isInitialized();
 
+  public abstract boolean ok();
+
 	public abstract NodeHandle createNodeHandle(String ns, Map<String, String> remappings);
 
 	public abstract Time now();
