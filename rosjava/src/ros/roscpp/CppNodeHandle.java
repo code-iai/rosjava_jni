@@ -113,6 +113,8 @@ public class CppNodeHandle extends NodeHandle {
 		isValid = false;
 	}
 
+  public boolean ok() { return JNI.ok(cppHandle); }
+
 	public boolean isValid()     { return isValid; } 
 	
 	

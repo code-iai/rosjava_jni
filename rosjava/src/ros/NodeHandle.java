@@ -49,9 +49,9 @@ public abstract class NodeHandle {
 	public abstract String getNamespace();
 	public abstract String resolveName(String name);
 	public abstract String getName();
-//	public abstract boolean ok(); ??
 	public abstract boolean isValid();
 	public abstract void shutdown();
+  public abstract boolean ok();
 
 	public abstract boolean checkMaster();
 	public abstract String getMasterHost();

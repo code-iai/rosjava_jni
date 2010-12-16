@@ -307,6 +307,13 @@ JNIEXPORT void JNICALL Java_ros_roscpp_JNI_shutdown
 	delete handle;
 }
 
+JNIEXPORT jboolean JNICALL Java_ros_roscpp_JNI_ok
+  (JNIEnv * env, jclass __jni, jlong cppHandle)
+{
+  NodeHandle *handle = (NodeHandle *) cppHandle;
+	return handle->ok();
+}
+
 
 
 

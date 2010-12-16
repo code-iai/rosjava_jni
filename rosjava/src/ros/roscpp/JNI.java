@@ -56,6 +56,7 @@ class JNI {
 
 	public static native long createNodeHandle(String ns, Object[] remappings);
 	public static native void shutdown(long cppHandle);
+  public static native boolean ok(long cppHandle); 
 	
 	public static native void spin();
 	public static native void spinOnce();
