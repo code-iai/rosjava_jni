@@ -299,8 +299,8 @@ def write_constant_declaration(s, constant):
     @param constant: The constant
     @type constant: roslib.msgs.Constant
     """
-    if constant.type == 'string' and constant.val[0] != '"':
-        s.write('  static public final %s;\n'% msg_decl_to_java(constant, '"' + constant.val + '"'))
+    if constant.type == 'string':
+        s.write('  static public final %s;\n'% msg_decl_to_java(constant, '"' + escape_string(constant.val) + '"'))
     else:
         s.write('  static public final %s;\n'% msg_decl_to_java(constant, constant.val))
         
