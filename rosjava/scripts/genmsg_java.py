@@ -118,7 +118,11 @@ def base_type_to_java(base_type):
         java_type = MSG_TYPE_TO_JAVA[base_type]
     elif (len(base_type.split('/')) == 1):
         if (roslib.msgs.is_header_type(base_type)):
-            java_type = 'ros.pkg.roslib.msg.Header'
+            ros_v = ros_version()
+            if ros_v[0] == 1 and ros_v[1] < 3:
+                java_type = 'ros.pkg.roslib.msg.Header'
+            else:
+                java_type = 'ros.pkg.std_msgs.msg.Header'
         else:
             java_type = base_type
     else:
@@ -571,6 +575,12 @@ def compute_full_text_escaped(gen_deps_dict):
     val = s.getvalue()
     s.close()
     return val
+
+def ros_version():
+    p = os.popen('rosversion ros')
+    result = tuple([int(x) for x in p.readline().split('.')])
+    p.close()
+    return result
 
 def generate(msg_path, output_base_path=None):
     """
