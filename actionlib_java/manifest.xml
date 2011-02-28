@@ -1,0 +1,16 @@
+<package>
+  <description brief="actionlib_java">
+
+     actionlib_java
+
+  </description>
+  <author>Alexander Perzylo</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/actionlib_java</url>
+  <depend package="rosjava"/>
+  <depend package="actionlib_msgs"/>
+
+</package>
+
+
