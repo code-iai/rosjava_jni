@@ -1,0 +1,18 @@
+<package>
+  <description brief="tfjava">
+
+     tfjava
+
+  </description>
+  <author>Sjoerd van den Dries</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/tfjava</url>
+  <depend package="rosjava"/>
+  <depend package="tf"/>  
+
+  <export>
+    <java classpath="${prefix}/bin:${prefix}/lib/vecmath.jar"/>    
+  </export>
+
+</package>
