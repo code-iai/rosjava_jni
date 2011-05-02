@@ -1,5 +1,18 @@
 #!/bin/bash
 
+function fix_ros_destination () {
+    if [ -z "$2" ]; then
+        echo "Usage: fix_ros_destination <source-str> <out-var>"
+        exit 1
+    fi
+
+    if [ -z "$ROS_DISTRO_DIR" ] || [ -z "$ROS_DISTRO_DIR_FINAL" ] ; then
+        export $2="$1"
+    else
+        export $2="$(echo $1 | sed "s?$ROS_DISTRO_DIR?$ROS_DISTRO_DIR_FINAL?g" -)"
+    fi
+}
+
 if [ -z "$3" ]; then
     echo "Usage: $0 <classpath> <Main Class> <outputfile> <extra-library-paths> <extra-ld-preload> <extra-args*>"
     exit 1
@@ -7,13 +20,17 @@ fi
 
 ROSJAVA_BASE_DIR=$(rospack find rosjava)
 
+fix_ros_destination "$ROSJAVA_BASE_DIR" ROSJAVA_BASE_DIR_FINAL
+fix_ros_destination "$1" CLASSPATH_FINAL
+fix_ros_destination "$4" EXTRAL_LD_LIB_PATH_FINAL
+fix_ros_destination "$5" EXTRAL_LD_PRELOAD_FINAL
 
 cat <<EOF > $3
 #!/bin/bash
 
 OS=\`uname -s\`
 if [ "\$OS" == "Darwin" ] ; then
-  DYLD_LIBRARY_PATH=${ROSJAVA_BASE_DIR}/bin:$4:\$DYLD_LIBRARY_PATH java -classpath $1 $2 ${@:5} \$@
+  DYLD_LIBRARY_PATH=${ROSJAVA_BASE_DIR}/bin:$EXTRAL_LD_LIB_PATH_FINAL:\$DYLD_LIBRARY_PATH java -classpath $CLASSPATH_FINAL $2 ${@:6} \$@
 else
   LIBJSIG=\`find \$JAVA_HOME/jre/lib/ -maxdepth 2 -name "libjsig.so"\`
   if [ -z "\$LIBJSIG" ]; then
@@ -21,7 +38,7 @@ else
     exit 1
   fi
 
-  LD_PRELOAD=$5:\$LIBJSIGL:\$LD_PRELOAD LD_LIBRARY_PATH=${ROSJAVA_BASE_DIR}/bin:$4:\$LD_LIBRARY_PATH java -classpath $1:\$CLASSPATH $2 ${@:6} \$@
+  LD_PRELOAD=$EXTRAL_LD_PRELOAD_FINAL:\$LIBJSIGL:\$LD_PRELOAD LD_LIBRARY_PATH=${ROSJAVA_BASE_DIR_FINAL}/bin:$EXTRA_LD_LIB_PATH_FINAL:\$LD_LIBRARY_PATH java -classpath $CLASSPATH_FINAL:\$CLASSPATH $2 ${@:6} \$@
 fi
 
 
