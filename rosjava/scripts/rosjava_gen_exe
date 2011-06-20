@@ -22,15 +22,15 @@ ROSJAVA_BASE_DIR=$(rospack find rosjava)
 
 fix_ros_destination "$ROSJAVA_BASE_DIR" ROSJAVA_BASE_DIR_FINAL
 fix_ros_destination "$1" CLASSPATH_FINAL
-fix_ros_destination "$4" EXTRAL_LD_LIB_PATH_FINAL
-fix_ros_destination "$5" EXTRAL_LD_PRELOAD_FINAL
+fix_ros_destination "$4" EXTRA_LD_LIB_PATH_FINAL
+fix_ros_destination "$5" EXTRA_LD_PRELOAD_FINAL
 
 cat <<EOF > $3
 #!/bin/bash
 
 OS=\`uname -s\`
 if [ "\$OS" == "Darwin" ] ; then
-  DYLD_LIBRARY_PATH=${ROSJAVA_BASE_DIR}/bin:$EXTRAL_LD_LIB_PATH_FINAL:\$DYLD_LIBRARY_PATH java -classpath $CLASSPATH_FINAL $2 ${@:6} \$@
+  DYLD_LIBRARY_PATH=${ROSJAVA_BASE_DIR}/bin:$EXTRA_LD_LIB_PATH_FINAL:\$DYLD_LIBRARY_PATH java -classpath $CLASSPATH_FINAL $2 ${@:6} \$@
 else
   LIBJSIG=\`find \$JAVA_HOME/jre/lib/ -maxdepth 2 -name "libjsig.so"\`
   if [ -z "\$LIBJSIG" ]; then
@@ -38,7 +38,7 @@ else
     exit 1
   fi
 
-  LD_PRELOAD=$EXTRAL_LD_PRELOAD_FINAL:\$LIBJSIGL:\$LD_PRELOAD LD_LIBRARY_PATH=${ROSJAVA_BASE_DIR_FINAL}/bin:$EXTRA_LD_LIB_PATH_FINAL:\$LD_LIBRARY_PATH java -classpath $CLASSPATH_FINAL:\$CLASSPATH $2 ${@:6} \$@
+  LD_PRELOAD=$EXTRA_LD_PRELOAD_FINAL:\$LIBJSIGL:\$LD_PRELOAD LD_LIBRARY_PATH=${ROSJAVA_BASE_DIR_FINAL}/bin:$EXTRA_LD_LIB_PATH_FINAL:\$LD_LIBRARY_PATH java -classpath $CLASSPATH_FINAL:\$CLASSPATH $2 ${@:6} \$@
 fi
 
 
