@@ -14,7 +14,7 @@ CP=
 PARAM=
 first=0
 
-DIR=`rospack find rosjava`
+DIR=`rospack find rosjava_jni`
 if [ ! -e "$DIR" ]
 then
   echo "$pkg not found"

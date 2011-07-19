@@ -18,7 +18,7 @@ if [ -z "$3" ]; then
     exit 1
 fi
 
-ROSJAVA_BASE_DIR=$(rospack find rosjava)
+ROSJAVA_BASE_DIR=$(rospack find rosjava_jni)
 
 fix_ros_destination "$ROSJAVA_BASE_DIR" ROSJAVA_BASE_DIR_FINAL
 fix_ros_destination "$1" CLASSPATH_FINAL

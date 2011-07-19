@@ -1,4 +1,4 @@
-rosbuild_find_ros_package(rosjava)
+rosbuild_find_ros_package(rosjava_jni)
 include(FindJava)
 
 set( _java_classpath "${PROJECT_SOURCE_DIR}/msg_gen/java;${PROJECT_SOURCE_DIR}/srv_gen/java" )
@@ -55,7 +55,7 @@ macro(add_ld_preload _lib)
   endif(EXISTS ${_lib})
 endmacro(add_ld_preload)
 
-add_classpath(${rosjava_PACKAGE_PATH}/bin)
+add_classpath(${rosjava_jni_PACKAGE_PATH}/bin)
 
 # Hack to allow dynamic generation of target names that aren't very very
 # long
@@ -216,12 +216,12 @@ add_exported_classpaths()
 add_exported_ld_lib_paths()
 
 macro(rospack_add_java_executable _exe_name _class)
-  string(REPLACE ";" ":" _javac_classpath_param "${JAVA_OUTPUT_DIR}:${_java_runtime_classpath}:${rosjava_PACKAGE_PATH}/bin:$ENV{ROSJAVA_AUX_CLASSPATH}")
+  string(REPLACE ";" ":" _javac_classpath_param "${JAVA_OUTPUT_DIR}:${_java_runtime_classpath}:${rosjava_jni_PACKAGE_PATH}/bin:$ENV{ROSJAVA_AUX_CLASSPATH}")
   string(REPLACE ";" ":" _ld_lib_path "${_ld_lib_path}")
   string(REPLACE ";" ":" _ld_preload "${_ld_preload}")
   add_custom_command(
     OUTPUT ${EXECUTABLE_OUTPUT_PATH}/${_exe_name}
-    COMMAND ${rosjava_PACKAGE_PATH}/scripts/rosjava_gen_exe ${_javac_classpath_param} ${_class} ${EXECUTABLE_OUTPUT_PATH}/${_exe_name} ${_ld_lib_path} ${_ld_preload})
+    COMMAND ${rosjava_jni_PACKAGE_PATH}/scripts/rosjava_gen_exe ${_javac_classpath_param} ${_class} ${EXECUTABLE_OUTPUT_PATH}/${_exe_name} ${_ld_lib_path} ${_ld_preload})
   set(_targetname ${EXECUTABLE_OUTPUT_PATH}/${_exe_name})
   string(REPLACE "/" "_" _targetname ${_targetname})
   add_custom_target(${_targetname} ALL DEPENDS ${EXECUTABLE_OUTPUT_PATH}/${_exe_name})
@@ -238,7 +238,7 @@ macro(genmsg_java_pkg pkg output_dir)
   
     rosbuild_gendeps(${pkg} ${_msg})
   
-    set(genmsg_java_exe ${rosjava_PACKAGE_PATH}/scripts/genmsg_java.py)
+    set(genmsg_java_exe ${rosjava_jni_PACKAGE_PATH}/scripts/genmsg_java.py)
     set(_output_java ${output_dir}/ros/pkg/${pkg}/msg/${_msg})
     string(REPLACE ".msg" ".java" _output_java ${_output_java})
   
@@ -269,8 +269,8 @@ macro(gensrv_java_pkg pkg output_dir)
   
     rosbuild_gendeps(${pkg} ${_srv})
   
-    set(gensrv_java_exe ${rosjava_PACKAGE_PATH}/scripts/gensrv_java.py)
-    set(genmsg_java_exe ${rosjava_PACKAGE_PATH}/scripts/genmsg_java.py)    
+    set(gensrv_java_exe ${rosjava_jni_PACKAGE_PATH}/scripts/gensrv_java.py)
+    set(genmsg_java_exe ${rosjava_jni_PACKAGE_PATH}/scripts/genmsg_java.py)    
     set(_output_java ${output_dir}/ros/pkg/${pkg}/srv/${_srv})
     string(REPLACE ".srv" ".java" _output_java ${_output_java})
   

@@ -36,7 +36,7 @@
 ## 
 ## Converts ROS .msg files in a package into C++ source code implementations.
 
-import roslib; roslib.load_manifest('rosjava')
+import roslib; roslib.load_manifest('rosjava_jni')
 import genmsg_java
  
 import sys

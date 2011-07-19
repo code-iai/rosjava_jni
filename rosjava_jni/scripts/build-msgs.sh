@@ -28,7 +28,7 @@ PACKAGES="roslib
  	    fk_node
 	    "
 
-CP=`rospack find rosjava`/src
+CP=`rospack find rosjava_jni`/src
 
 cd $CP
 find . -name "*.java" | xargs javac -cp $CP

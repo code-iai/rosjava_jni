@@ -32,7 +32,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-import roslib; roslib.load_manifest('rosjava')
+import roslib; roslib.load_manifest('rosjava_jni')
 
 import sys
 import os
