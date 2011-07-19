@@ -26,14 +26,14 @@
  */
 
 #include "ros/ros.h"
-#include "test_rosjava/TestDataTypes.h"
-#include "test_rosjava/TestTwoInts.h"
+#include "test_rosjava_jni/TestDataTypes.h"
+#include "test_rosjava_jni/TestTwoInts.h"
 #include "std_msgs/String.h"
 #include <gtest/gtest.h>
 #include <ros/time.h>
 #include <ros/console.h>
 
-using namespace test_rosjava;
+using namespace test_rosjava_jni;
 
 int num_messages_received=0;
 std::string last_message = "";

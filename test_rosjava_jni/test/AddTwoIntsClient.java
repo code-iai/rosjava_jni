@@ -1,6 +1,6 @@
 import ros.*;
 import ros.communication.*;
-import ros.pkg.test_rosjava.srv.*;
+import ros.pkg.test_rosjava_jni.srv.*;
 
 public class AddTwoIntsClient {
     public static void main(String args[]) 

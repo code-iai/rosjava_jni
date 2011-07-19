@@ -1,8 +1,8 @@
 
 import ros.*;
 import ros.communication.*;
-import ros.pkg.test_rosjava.msg.*;
-import ros.pkg.test_rosjava.srv.*;
+import ros.pkg.test_rosjava_jni.msg.*;
+import ros.pkg.test_rosjava_jni.srv.*;
 import ros.pkg.std_msgs.msg.ByteMultiArray;
 import ros.pkg.std_msgs.msg.MultiArrayLayout;
 import ros.pkg.std_msgs.msg.MultiArrayDimension;
