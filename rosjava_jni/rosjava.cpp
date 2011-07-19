@@ -389,23 +389,23 @@ JNIEXPORT jstring JNICALL Java_ros_roscpp_JNI_getPackageLocation
 (JNIEnv * env, jclass __jni, jstring jname)
 {
 	string pkgName = getString(env,jname);
-	
-	char a1[21], a2[21], a3[1025]; 
-	snprintf(a1, 20, "rospack"); 
-	snprintf(a2, 20, "find"); 
-	snprintf(a3, 1024, "%s", pkgName.c_str()); 
+
+	char a1[21], a2[21], a3[1025];
+	snprintf(a1, 20, "rospack");
+	snprintf(a2, 20, "find");
+	snprintf(a3, 1024, "%s", pkgName.c_str());
 	char* argv[3] = {a1, a2, a3};
-	std::string retval = ""; 
+	std::string retval = "";
 	try  {
 		rospack::ROSPack rp;
 		rp.run(3, argv);
 		retval = rp.getOutput();
-		retval.resize(retval.size()-1); 
+		retval.resize(retval.size()-1);
 	}
 	catch(std::runtime_error &e) {
 		fprintf(stderr, "[rospack] %s\n", e.what());
 	}
-	
+
 	return makeString(env, retval);
 }
 
@@ -620,14 +620,14 @@ JNIEXPORT void JNICALL Java_ros_roscpp_JNI_setParam__JLjava_lang_String_2Ljava_l
  ************************************************************/
 
 
-class JavaMessage : public ros::Message
+class JavaMessage
 {
 public:
     jobject _message;
 
     JavaMessage(jobject message) : _message(getJNIEnv()->NewGlobalRef(message)) {}
 
-    JavaMessage(const JavaMessage& r) : Message()
+    JavaMessage(const JavaMessage& r)
     {
 //    	cout << "CLONE" << endl;
       	JNIEnv * env = getJNIEnv();
@@ -706,10 +706,9 @@ public:
        	return writePtr + len;
     }
 
-    virtual uint8_t *deserialize(uint8_t *readPtr) {
+    virtual uint8_t *deserialize(uint8_t *readPtr, uint32_t sz) {
 //		cout << "deserialize" << endl;
     	JNIEnv * env = getJNIEnv();
-    	int sz = __serialized_length;
     	if (sz == 0) {
 //    		ROS_WARN("empty message!");
     		return readPtr;
@@ -724,6 +723,44 @@ public:
     }
 };
 
+namespace ros
+{
+
+namespace serialization
+{
+
+template<>
+struct Serializer<JavaMessage>
+{
+  /**
+   * \brief Write an object to the stream.  Normally the stream passed in here will be a ros::serialization::OStream
+   */
+  template<typename Stream>
+  inline static void write(Stream& stream, boost::call_traits<JavaMessage>::param_type t)
+  {
+    t.serialize(stream.getData(), 0);
+  }
+
+  /**
+   * \brief Read an object from the stream.  Normally the stream passed in here will be a ros::serialization::IStream
+   */
+  template<typename Stream>
+  inline static void read(Stream& stream, boost::call_traits<JavaMessage>::reference t)
+  {
+    t.deserialize(stream.getData(), stream.getLength());
+  }
+
+  /**
+   * \brief Determine the serialized length of an object.
+   */
+  inline static uint32_t serializedLength(boost::call_traits<JavaMessage>::param_type t)
+  {
+    return t.serializationLength();
+  }
+};
+
+}
+}
 
 /************************************************************
  *   Subscriptions
