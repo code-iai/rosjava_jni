@@ -21,7 +21,8 @@
   <rosdep name="java"/>
   <export>
     <roslang cmake="${prefix}/cmake/rosjava.cmake"/>
-    <java classpath="${prefix}/bin"/>
+    <java classpath="${prefix}/bin"
+          ld_lib_path="${prefix}/bin"/>
   </export>
   <url>http://ros.org/wiki/rosjava</url>
   <platform os="ubuntu" version="9.04"/>
