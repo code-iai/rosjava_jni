@@ -139,7 +139,10 @@ def base_type_deserialization_code(type):
 
 def type_initializer(type, default_val = None):
     if default_val is not None:
-        return ' = %s' % default_val
+        if type == 'float32':
+            return ' = %sf' % default_val
+        else:
+            return ' = %s' % default_val
     elif roslib.msgs.is_builtin(type):
         if type in ['time', 'duration', 'string']:
             return ' = new %s()' % base_type_to_java(type)
@@ -150,7 +153,7 @@ def type_initializer(type, default_val = None):
     
 def msg_decl_to_java(field, default_val=None):
     """
-    Converts a message type (e.g. uint32, std_msgs/String, etc.) into the Java declaration
+    Converts a message type (e.g. uint32, std_msgs/String, etc.) to the Java declaration
     for that type.
     
     @param type: The message type
