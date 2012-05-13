@@ -18,6 +18,7 @@
   <depend package="roscpp"/>
   <depend package="roslang"/>
   <depend package="rospack"/>
+  <depend package="std_msgs"/>
   <rosdep name="java"/>
   <export>
     <roslang cmake="${prefix}/cmake/rosjava.cmake"/>
