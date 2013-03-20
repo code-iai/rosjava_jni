@@ -580,7 +580,7 @@ def compute_full_text_escaped(gen_deps_dict):
     return val
 
 def ros_version():
-    p = os.popen('rosversion ros')
+    p = os.popen('rosversion roslib')
     version_string = p.readline()
     if version_string:
         result = tuple([int(x) for x in version_string.split('.')])
