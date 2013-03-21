@@ -1,6 +1,6 @@
 <stack>
   <description brief="client_rosjava">client_rosjava</description>
-  <author>Maintained by Lorenz Moesenlechner</author>
+  <author>Maintained by Gheorghe Lisca (lisca@cs.uni-bremen.de) and developed by Jason Wolfe (jawolfe@willowgarage.com), Nicholas Butko (nbutko@cogsci.ucsd.edu), Lorenz Moesenlechner (moesenle@in.tum.de)</author>
   <license>BSD</license>  
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/client_rosjava</url>
