@@ -138,6 +138,20 @@ public class TimeCache {
                 storage.pollFirstEntry();
             }       
         }
-    }     
+    }
+    
+    /**
+     * Check whether timepoint 'time' is between the oldest and newest entries in tbe buffer.
+     * 
+     * @param time Time point to be checked
+     * @return true if 'time' is between the oldest and newest buffer entry
+     */
+    public boolean timeInBufferRange(long time) {
+    	if (!storage.isEmpty()) {
+            if(time >  storage.firstKey()  && time < storage.lastKey())
+            	return true;
+        }
+    	return false;
+    }
     
 }
